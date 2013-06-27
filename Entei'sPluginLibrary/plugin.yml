@@ -1,0 +1,5 @@
+name: EnteisPluginLib
+prefix: "Entei's Plugin Library"
+main: com.gmail.br45entei.enteispluginlib.EPLib
+version: 0.0.1
+author: Brian_Entei
