@@ -150,7 +150,10 @@ public class FileMgmt {
 			}
 			if(loadIfNoFile == true) {
 				saveTo.createNewFile();
-			} else {if(saveTo.exists() == false) {return null;}
+			} else {
+				if(saveTo.exists() == false) {
+					throw new IOException("File \"" + filename + "\" was not found.");
+				}
 				saveTo.createNewFile();
 			}
 			rtrn = ReadFromFile(saveTo, dataFolderName);

@@ -60,6 +60,11 @@ public class EPLib extends JavaPlugin implements Listener {
 	public static final String getNumberChars = "\\p{Digit}+";
 	public static final String getUpperCaseChars = "\\p{Lower}+";
 	public static final String getLowerCaseChars = "\\p{Upper}+";
+	/**The variable used to store messages that are meant to be displayed only once.
+	 * @see <a href="http://enteisislandsurvival.no-ip.org/javadoc/index.html">Main.sendOneTimeMessage()</a>
+	 * @see <a href="http://enteisislandsurvival.no-ip.org/javadoc/index.html">Java Documentation for EnteisCommands</a>
+	 */
+	private static ArrayList<String> oneTimeMessageList = new ArrayList<String>();
 	public static boolean logChats = false;
 	public static ArrayList<String> ChatColorCharList = new ArrayList<String>();
 	public static ArrayList<String> ChatColorHtmlList = new ArrayList<String>();
@@ -504,4 +509,32 @@ public class EPLib extends JavaPlugin implements Listener {
 		sendConsoleMessage(pluginName + "&eWarning! \"" + warningVar + "\" was not specified in the \"" + fileName + "\" file! Has the existing \"" + fileName + "\" file not been updated from a past version?");
 		return warningVar;
 	}
+	/**Sends the specified target the message if the message hasn't been sent before during this server session. If no target is specified, or the target that is specified does not exist, then this function broadcasts the parameter str.
+	 * @param str String
+	 * @param target String
+	 * @return True if a message was sent, false otherwise.*/
+	public static boolean sendOneTimeMessage(String str, String target) {
+		// TODO Auto-generated method stub
+		if(str.equals("") || str.equals(null) || str == null) {return false;}
+		boolean hasMessageBeenSentBefore = false;
+		for(String curMsg : oneTimeMessageList) {
+			if(str.equalsIgnoreCase(curMsg)) {
+				hasMessageBeenSentBefore = true;
+				break;
+			}
+		}
+		if(hasMessageBeenSentBefore == false) {
+			Player plyr = Bukkit.getServer().getPlayer(target);
+			if(plyr != null) {
+				sendMessage(plyr, str);
+			} else if(target.equalsIgnoreCase("console") || target.equals("!")) {
+				sendConsoleMessage(str);
+			} else {
+				Bukkit.getServer().broadcastMessage(formatColorCodes(str));
+			}
+			return true;
+		}
+		return false;
+	}
+	
 }
