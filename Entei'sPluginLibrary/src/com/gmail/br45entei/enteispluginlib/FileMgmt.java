@@ -126,7 +126,37 @@ public class FileMgmt {
 		}
 	}
 
-
+	public static String ReadFromFile(String filename, String folder, String dataFolderName, boolean loadIfNoFile) {
+		String rtrn = "";
+		try {
+			File dataFolder = FileMgmt.getPluginFolder(dataFolderName);
+			if(!(dataFolder.exists())) {
+				dataFolder.mkdir();
+			}
+			File newFolder = null;
+			if(folder.equals("") == false) {
+				newFolder = new File(dataFolder, folder);
+				if(newFolder.exists() != true) {
+					newFolder.mkdir();
+				}
+			} else {
+				newFolder = dataFolder;
+			}
+			File saveTo = null;
+			if(filename.contains(".")) {
+				saveTo = new File(newFolder, filename);
+			} else {
+				saveTo = new File(newFolder, (filename + ".txt"));
+			}
+			if(loadIfNoFile == true) {
+				saveTo.createNewFile();
+			} else {if(saveTo.exists() == false) {return null;}
+				saveTo.createNewFile();
+			}
+			rtrn = ReadFromFile(saveTo, dataFolderName);
+		} catch (IOException e) {LogCrash(e, "ReadFromFile(fileName, folder, dataFolderName)", "An error occurred when attempting to read the file. Check the crash-reports.txt file for more info.", true, dataFolderName);}// <--That makes an infinite loop of errors, because you are calling a function inside of itself...
+		return rtrn;
+	}
 
 	public static String ReadFromFile(String filename, String folder, String dataFolderName) {
 		String rtrn = "";

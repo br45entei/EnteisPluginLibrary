@@ -485,8 +485,8 @@ public class EPLib extends JavaPlugin implements Listener {
 			msg = replaceWord(msg, "dood", "dude", false, dataFolderName);
 			msg = replaceWord(msg, "Dude", "Man", true, dataFolderName);
 			msg = replaceWord(msg, "dude", "man", false, dataFolderName);
-			msg = replaceWord(msg, "", "", true, dataFolderName);
-			msg = replaceWord(msg, "", "", false, dataFolderName);
+			msg = replaceWord(msg, "Woot", "Hurrah", true, dataFolderName);
+			msg = replaceWord(msg, "woot", "hurrah", false, dataFolderName);
 			/*msg = replaceWord(msg, "", "", true, dataFolderName);
 			msg = replaceWord(msg, "", "", false, dataFolderName);*/
 			msg = msg.replaceAll("(?i)\\bbud der\\b", "gold");
