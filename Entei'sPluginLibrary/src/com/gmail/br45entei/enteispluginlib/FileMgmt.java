@@ -125,8 +125,14 @@ public class FileMgmt {
 			LogCrash(e, "copy()", "Failed to copy from InputStream to file \"" + file.getName() + "\".", true, dataFolderName);
 		}
 	}
-
-	public static String ReadFromFile(String filename, String folder, String dataFolderName, boolean loadIfNoFile) {
+	/**
+	 * @param filename
+	 * @param folder
+	 * @param dataFolderName
+	 * @param loadIfNoFile
+	 * @return
+	 * @throws Exception */
+	public static String ReadFromFile(String filename, String folder, String dataFolderName, boolean loadIfNoFile) throws Exception {
 		String rtrn = "";
 		try {
 			File dataFolder = FileMgmt.getPluginFolder(dataFolderName);
@@ -152,12 +158,14 @@ public class FileMgmt {
 				saveTo.createNewFile();
 			} else {
 				if(saveTo.exists() == false) {
-					throw new IOException("File \"" + filename + "\" was not found.");
+					throw new Exception("File \"" + filename + "\" was not found.");
 				}
 				saveTo.createNewFile();
 			}
 			rtrn = ReadFromFile(saveTo, dataFolderName);
-		} catch (IOException e) {LogCrash(e, "ReadFromFile(fileName, folder, dataFolderName)", "An error occurred when attempting to read the file. Check the crash-reports.txt file for more info.", true, dataFolderName);}// <--That makes an infinite loop of errors, because you are calling a function inside of itself...
+		} catch (IOException e) {
+			LogCrash(e, "ReadFromFile(fileName, folder, dataFolderName)", "An error occurred when attempting to read the file. Check the crash-reports.txt file for more info.", true, dataFolderName);
+		}
 		return rtrn;
 	}
 

@@ -367,7 +367,7 @@ public class EPLib extends JavaPlugin implements Listener {
 	}
 	public static String GrammarEnforcement(String msg, Player chatter, String dataFolderName) {
 		try {
-			if(msg.length() >= 1) {msg = msg.substring(0, 1).toUpperCase() + msg.substring(1, msg.length());}
+			msg = capitalizeFirstLetter(msg);
 			msg = replaceWord(msg, "(\\w+)(\\s+\\1)+", "$1", false, dataFolderName);
 			msg = replaceWord(msg, "(\\w+)(\\.*\\4)+", "$1", false, dataFolderName);
 			/**/msg = replaceWord(msg, "\\p{Alnum}\\1{4,}", "$1", false, dataFolderName);
@@ -497,6 +497,14 @@ public class EPLib extends JavaPlugin implements Listener {
 			msg = msg.replaceAll("(?i)\\bbud der\\b", "gold");
 		} catch (ArrayIndexOutOfBoundsException e) {FileMgmt.LogCrash(e, "GrammarEnforcement()", "A bad regex was used in the function \"replaceWord(String msg, String regex, String replacement, boolean case_sensitive)\"!", true, dataFolderName);}
 		return msg.trim();
+	}
+	/**
+	 * @param msg String
+	 * @return The given String, with the first letter capitalized. If the first character is not a letter, then this function only returns the same String.
+	 */
+	public static String capitalizeFirstLetter(String msg) {
+		if(msg.length() >= 1) {msg = msg.substring(0, 1).toUpperCase() + msg.substring(1, msg.length());}
+		return msg;
 	}
 	/**public static String unSpecifiedVarWarning(final String warningVar, final String pluginName) {<br>
 	 * 	sendConsoleMessage(pluginName + "Warning! \"" + warningVar + "\" was not specified in the config.yml! Has the config.yml been updated from a past version?");<br>
