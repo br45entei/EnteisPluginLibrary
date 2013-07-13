@@ -16,6 +16,7 @@ import javax.swing.Spring;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
@@ -40,6 +41,7 @@ public class EPLib extends JavaPlugin implements Listener {
 	private static final Logger logger = Logger.getLogger("Minecraft");
 	public static PluginDescriptionFile pdffile;
 	public static ConsoleCommandSender console = null;
+	public static Server server = null;
 	public static String consoleSayFormat = "";
 	public static CommandSender rcon = null;
 	public static boolean vaultIsAvailable = false;
@@ -91,6 +93,7 @@ public class EPLib extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {pdffile = this.getDescription();
 		console = getServer().getConsoleSender();
+		server = Bukkit.getServer();
 		consoleSayFormat = "&e" + console.getName() + "&r&f ";
 		ChatColorCharList.add("0");ChatColorHtmlList.add("color: #000000");
 		ChatColorCharList.add("1");ChatColorHtmlList.add("color: #000080");
