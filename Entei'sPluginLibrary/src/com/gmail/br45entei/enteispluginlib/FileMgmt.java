@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-/**Hosts functions and methods that are used in <a href="http://enteisislandsurvival.no-ip.org/javadoc/enteischatmanager/com/gmail/br45entei/enteischatmanager/MainChatClass.html">MainChatClass.class</a>.
+/**Hosts functions and methods that are used in many different plugins; this class is primarily for ease of access to the filesystem of the host machine.
  * @since 0.1
  * @author <a href="http://enteisislandsurvival.no-ip.org/about/author.html">Brian_Entei</a>*/
 public class FileMgmt {
@@ -27,11 +27,18 @@ public class FileMgmt {
 			if(folder.equals("") == false) {
 				newFolder = new File(dataFolder, folder);
 				if(newFolder.exists() != true) {
-					newFolder.mkdir();
+					newFolder.mkdirs();
 				}
 			} else {
 				newFolder = dataFolder;
 			}
+			
+			
+			
+			newFolder.mkdirs();
+			
+			
+			
 			File saveTo = null;
 			if(filename.contains(".")) {
 				saveTo = new File(newFolder, filename);
@@ -39,6 +46,7 @@ public class FileMgmt {
 				saveTo = new File(newFolder, (filename + ".txt"));
 			}
 			if (!(saveTo.exists())) {
+				EPLib.console.sendMessage("saveTo.getAbsolutePath(): \"" + saveTo.getAbsolutePath() + "\"...");
 				saveTo.createNewFile();
 			} else {
 				if(wipeOnWrite == true) {
@@ -52,7 +60,7 @@ public class FileMgmt {
 			pw.println(message);
 			pw.flush();pw.close();
 			writeSuccess = true;
-		} catch (IOException e) {e.printStackTrace();/*WriteToFile("crash-reports", "--------------------------", false, "");WriteToFile("crash-reports", e.getMessage(), false, "");*/}// <--That makes an infinite loop of errors, because you are calling a function inside of itself...
+		} catch (IOException e) {EPLib.console.sendMessage(EPLib.formatColorCodes("&cAn error occurred while attempting to perform the following function: WriteToFile(String filename(\"" + filename + "\"), String message(\"" + message + "\"), boolean wipeOnWrite(\"" + wipeOnWrite + "\"), String folder(\"" + folder + "\"), String dataFolderName(\"" + dataFolderName + "\"))")); e.printStackTrace();/*WriteToFile("crash-reports", "--------------------------", false, "");WriteToFile("crash-reports", e.getMessage(), false, "");*/}// <--That makes an infinite loop of errors, because you are calling a function inside of itself...
 		return writeSuccess;
 	}
 	public static String ReadFromFile(File filetoread, String dataFolderName) {

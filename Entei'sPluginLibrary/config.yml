@@ -1,0 +1,12 @@
+# Important! Make sure this config.yml file's version setting matches the version of the plugin!
+version: "0.0.2"
+
+# This allows debugging messages to be sent to the console when the 
+# plugin is being used.
+# Default: false
+showDebugMsgs: false
+
+# This is the message sent to the command sender if
+# they don't have permission to use the command they typed.
+# Default: "You do not have permission to use this command."
+noPermission: "You do not have permission to use this command."
