@@ -42,16 +42,16 @@ import org.bukkit.potion.PotionEffectType;
 public class InventoryAPI {
 	/**This is the tag that is used to start the item listings when serializing.
 	 */
-	private static String item_start = "#";
+	private static final String item_start = "#";
 	/**This is the tag that is used at the end of every serialized ItemStack.
 	 */
-	private static String item_separator = ";";
+	private static final String item_separator = ";";
 	/**This is the tag that is used at the start of every item attribute(like an enchantment, item damage, item lore, the book title, the item's name, the book author, a book page, etc.)
 	 */
-	private static String attribute_start = ":";
+	private static final String attribute_start = ":";
 	/**This is the tag that is used to separate every item attribute(like an enchantment, item damage, item lore, the book title, the item's name, the book author, a book page, etc.)
 	 */
-	private static String attribute_separator = "@";
+	private static final String attribute_separator = "@";
 	/**Converts a set of symbols that are used within the serializing functions to prevent data corruption, as well as any ChatColor characters(it changes them to their respective '&' codes). 
 	 * @param str String
 	 * @return The given string, with certain symbols changed to keep inventory formatting from getting broken because of a simple character.
@@ -133,6 +133,7 @@ public class InventoryAPI {
 	 * :l@ = Item Lore Data<br>
 	 * :n@ = Item Name<br>
 	 * :b@ = Book Data<br>
+	 * :z@ = Enchanted Book Data<br>
 	 * You can add an additional '@' after a tag to specify additional data if it has the word 'Data' in it's name above.<p>
 	 * <strong>An example of a player inventory, containing a Stone Pickaxe, with the custom Name "Hello, world!" and some enchantments and lore:</strong><br>
 	 * <font face="consolas" size="2">36;container.inventory;0#t@274:d@60:e@34@3:e@35@1:e@32@2:n@&3Hello, world!:l@&4The item's Lore, Line One@&2The Item's Lore, Line Two@Etc, &3etc.;</font><br>
@@ -187,6 +188,8 @@ public class InventoryAPI {
 				}
 				if(is.getType() == Material.BOOK_AND_QUILL || is.getType() == Material.WRITTEN_BOOK) {
 					serializedItemStack += serializeBook(is);
+				} else if(is.getType() == Material.ENCHANTED_BOOK) {
+					serializedItemStack += serializeEnchantedBook(is);
 				}
 				serialization += i + item_start + serializedItemStack + item_separator;
 			}
@@ -260,6 +263,8 @@ public class InventoryAPI {
 								is.setItemMeta(meta);
 							} else if(itemAttribute[0].equals("e")) {
 								is.addUnsafeEnchantment(Enchantment.getById(Integer.valueOf(itemAttribute[1])), Integer.valueOf(itemAttribute[2]));
+							} else if(itemAttribute[0].equals("z")) {
+								is = deserializeEnchantedBook(is, itemAttribute);
 							} else if(itemAttribute[0].equals("l")) {
 								ArrayList<String> lores = new ArrayList<String>();
 								for(int j = 1; j < itemAttribute.length; j++) {
@@ -449,6 +454,7 @@ public class InventoryAPI {
 		String rtrn = ":b@";
 		BookMeta meta;
 		if(item.getType() == Material.BOOK_AND_QUILL || item.getType() == Material.WRITTEN_BOOK) {
+			EPLib.sendConsoleMessage(EPLib.pluginName + "&aserializeBook(ItemStack item(&f" + item.getType().name() + "&a))");
 			meta = (BookMeta) item.getItemMeta();
 			String author = (meta.hasAuthor() ? meta.getAuthor() : null);
 			String title = (meta.hasTitle() ? meta.getTitle() : null);
@@ -471,6 +477,38 @@ public class InventoryAPI {
 		}
 		return (rtrn.equals(":b@") ? "" : rtrn);
 	}
+
+	public static String serializeEnchantedBook(ItemStack item) {
+		String rtrn = "";
+		if(item.getType() == Material.ENCHANTED_BOOK) {
+			org.bukkit.inventory.meta.EnchantmentStorageMeta EnchantMeta = (org.bukkit.inventory.meta.EnchantmentStorageMeta) item.getItemMeta();
+			if(EnchantMeta != null) {
+				Map<Enchantment,Integer> isEnch = EnchantMeta.getStoredEnchants();
+				if(isEnch.size() > 0) {
+					for(Entry<Enchantment,Integer> ench : isEnch.entrySet()) {
+						rtrn += attribute_start + "z" + attribute_separator + ench.getKey().getName() + attribute_separator + ench.getValue();
+					}
+				}
+			}
+		}
+		return rtrn;
+	}
+
+	@SuppressWarnings("boxing")
+	public static ItemStack deserializeEnchantedBook(ItemStack item, String[] itemAttribute) {
+		if(item == null && itemAttribute == null) {return new ItemStack(Material.ENCHANTED_BOOK);}
+		if(item == null) {item = new ItemStack(Material.ENCHANTED_BOOK);}
+		if(itemAttribute == null) {return item;}
+		if(item.getType() == Material.ENCHANTED_BOOK) {
+			org.bukkit.inventory.meta.EnchantmentStorageMeta EnchantMeta = (org.bukkit.inventory.meta.EnchantmentStorageMeta) (item.hasItemMeta() ? item.getItemMeta() : Bukkit.getServer().getItemFactory().getItemMeta(item.getType()));
+			if(itemAttribute[1] != null && itemAttribute[2] != null) {
+				EnchantMeta.addStoredEnchant(Enchantment.getByName(itemAttribute[1]), Integer.valueOf(itemAttribute[2]), true);
+			}
+			item.setItemMeta(EnchantMeta);
+		}
+		return item;
+	}
+
 	/**Attempts to deserialize the BookMeta data from the String[] parameter and add it to the given ItemStack, which is then returned. If no ItemStack is given, a Written Book is generated in its place, and the BookMeta assigned. If no String[] parameter is given, then this function will return the given ItemStack, or a blank Book and Quill if no ItemStack was given either. 
 	 * @param item ItemStack
 	 * @param itemAttribute String[]
