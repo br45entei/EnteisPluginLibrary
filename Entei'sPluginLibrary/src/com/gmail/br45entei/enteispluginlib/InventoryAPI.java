@@ -654,7 +654,8 @@ public class InventoryAPI {
 	}
 	
 	public static String serializeHealth(Player player) {
-		return convertSymbolsForSaving(player.getName()) + "#" + player.getHealth() + ";";
+		Damageable tempPlayer = (Damageable) player;
+		return convertSymbolsForSaving(player.getName()) + "#" + tempPlayer.getHealth() + ";";
 	}
 	
 	public static String[] deserializeHunger(String HungerString, Player player) { 
